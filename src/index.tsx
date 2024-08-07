@@ -13,14 +13,20 @@ const domNode = document.getElementById('root') as HTMLDivElement;
 const root = createRoot(domNode);
 
 const App = () => {
-
-	const [font,isFont] = useState(defaultArticleState.fontFamilyOption.value)
+	const [font, isFont] = useState(defaultArticleState.fontFamilyOption.value);
 	const fontChange = (font: OptionType) => isFont(font.value);
-	
-	const [fontColor,isFontColor] = useState(defaultArticleState.fontColor.value)
-	const fontColorChange = (fontColor: OptionType) => isFontColor(fontColor.value);
-	
-	
+
+	const [fontColor, isFontColor] = useState(
+		defaultArticleState.fontColor.value
+	);
+	const fontColorChange = (fontColor: OptionType) =>
+		isFontColor(fontColor.value);
+
+	const [bgColor, isBgColor] = useState(
+		defaultArticleState.backgroundColor.value
+	);
+	const bgColorChange = (bgColor: OptionType) => isBgColor(bgColor.value);
+
 	return (
 		<div
 			className={clsx(styles.main)}
@@ -30,12 +36,13 @@ const App = () => {
 					'--font-size': defaultArticleState.fontSizeOption.value,
 					'--font-color': fontColor,
 					'--container-width': defaultArticleState.contentWidth.value,
-					'--bg-color': defaultArticleState.backgroundColor.value,
+					'--bg-color': bgColor,
 				} as CSSProperties
 			}>
-			<ArticleParamsForm 
-				callback={fontChange} 
-				// callback2={fontColorChange}
+			<ArticleParamsForm
+				callback={fontChange}
+				callback2={fontColorChange}
+				callback3={bgColorChange}
 			/>
 			<Article />
 		</div>

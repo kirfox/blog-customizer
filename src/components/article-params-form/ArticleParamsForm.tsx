@@ -3,7 +3,7 @@ import { Button } from 'components/button';
 import { Text } from 'components/text';
 
 import styles from './ArticleParamsForm.module.scss';
-import { ReactNode, useRef, useState } from 'react';
+import { useState } from 'react';
 import clsx from 'clsx';
 import { Select } from '../select';
 import {
@@ -18,10 +18,13 @@ import {
 import { RadioGroup } from '../radio-group';
 import { Separator } from '../separator';
 
-export const ArticleParamsForm = (
-		{callback}: {callback: (font: OptionType)=> void},
-		{callback2}: {callback2: (fontColor: {})=> void}
-	) => {
+type Props = {
+	callback: (font: OptionType) => void;
+	callback2: (fontColor: OptionType) => void;
+	callback3: (fontColor: OptionType) => void;
+};
+
+export const ArticleParamsForm = (props: Props) => {
 	const [open, isOpen] = useState(false);
 	const handleOpen = () => isOpen(!open);
 
@@ -29,18 +32,22 @@ export const ArticleParamsForm = (
 		[styles.container]: true,
 		[styles.container_open]: open,
 	});
-	
+
 	const [font, isFont] = useState(defaultArticleState.fontFamilyOption);
-	const fontChange = (e: OptionType) => isFont(e); 
+	const fontChange = (e: OptionType) => isFont(e);
 
 	const [fontColor, isFontColor] = useState(defaultArticleState.fontColor);
-	const fontColorChange = (e: OptionType) => isFontColor(e); 
+	const fontColorChange = (e: OptionType) => isFontColor(e);
+
+	const [bgColor, isBgColor] = useState(defaultArticleState.backgroundColor);
+	const bgColorChange = (e: OptionType) => isBgColor(e);
 
 	const setSettings = () => {
 		event?.preventDefault();
-		callback(font)		
-		callback2(fontColor)
-	}
+		props.callback(font);
+		props.callback2(fontColor);
+		props.callback3(bgColor);
+	};
 
 	return (
 		<>
@@ -50,7 +57,8 @@ export const ArticleParamsForm = (
 					<Text as='h2' size={31} weight={800} uppercase>
 						Задайте параметры
 					</Text>
-					<Select onChange={fontChange} 
+					<Select
+						onChange={fontChange}
 						selected={font}
 						options={fontFamilyOptions}
 						title='шрифт'
@@ -61,14 +69,16 @@ export const ArticleParamsForm = (
 						selected={fontSizeOptions[0]}
 						title='размер шрифта'
 					/>
-					<Select onChange={fontColorChange} 
+					<Select
+						onChange={fontColorChange}
 						selected={fontColor}
 						options={fontColors}
 						title='Цвет шрифта'
 					/>
 					<Separator />
 					<Select
-						selected={backgroundColors[0]}
+						onChange={bgColorChange}
+						selected={bgColor}
 						options={backgroundColors}
 						title='Цвет фона'
 					/>
