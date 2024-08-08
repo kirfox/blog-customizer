@@ -27,22 +27,36 @@ const App = () => {
 	);
 	const bgColorChange = (bgColor: OptionType) => isBgColor(bgColor.value);
 
+	const [content, isContent] = useState(
+		defaultArticleState.contentWidth.value
+	);
+	const contentChange = (content: OptionType) => isContent(content.value);
+
+	const [fontSize, isFontSize] = useState(
+		defaultArticleState.fontSizeOption.value
+	);
+	const fontSizeChange = (fontSize: OptionType) => isFontSize(fontSize.value);
+
 	return (
 		<div
 			className={clsx(styles.main)}
 			style={
 				{
 					'--font-family': font,
-					'--font-size': defaultArticleState.fontSizeOption.value,
+					'--font-size': fontSize,
 					'--font-color': fontColor,
-					'--container-width': defaultArticleState.contentWidth.value,
+					'--container-width': content,
 					'--bg-color': bgColor,
 				} as CSSProperties
 			}>
 			<ArticleParamsForm
-				callback={fontChange}
-				callback2={fontColorChange}
-				callback3={bgColorChange}
+				callback={{
+					fontChange,
+					fontColorChange,
+					bgColorChange,
+					contentChange,
+					fontSizeChange
+				}}
 			/>
 			<Article />
 		</div>

@@ -19,9 +19,13 @@ import { RadioGroup } from '../radio-group';
 import { Separator } from '../separator';
 
 type Props = {
-	callback: (font: OptionType) => void;
-	callback2: (fontColor: OptionType) => void;
-	callback3: (fontColor: OptionType) => void;
+	callback: {
+		fontChange: (font: OptionType) => void,
+		fontColorChange: (fontColor: OptionType) => void;
+		bgColorChange: (bgColor: OptionType) => void;
+		contentChange: (content: OptionType) => void;
+		fontSizeChange: (fontSize: OptionType) => void;
+	}
 };
 
 export const ArticleParamsForm = (props: Props) => {
@@ -35,18 +39,39 @@ export const ArticleParamsForm = (props: Props) => {
 
 	const [font, isFont] = useState(defaultArticleState.fontFamilyOption);
 	const fontChange = (e: OptionType) => isFont(e);
-
+	
 	const [fontColor, isFontColor] = useState(defaultArticleState.fontColor);
 	const fontColorChange = (e: OptionType) => isFontColor(e);
 
 	const [bgColor, isBgColor] = useState(defaultArticleState.backgroundColor);
 	const bgColorChange = (e: OptionType) => isBgColor(e);
 
+	const [content, isContent] = useState(defaultArticleState.contentWidth);
+	const contentChange = (e: OptionType) => isContent(e);
+
+	const [fontSize, isFontSize] = useState(defaultArticleState.fontSizeOption);
+	const fontSizeChange = (e: OptionType) => isFontSize(e);
+
 	const setSettings = () => {
 		event?.preventDefault();
-		props.callback(font);
-		props.callback2(fontColor);
-		props.callback3(bgColor);
+		props.callback.fontChange(font);
+		props.callback.fontColorChange(fontColor);
+		props.callback.bgColorChange(bgColor);
+		props.callback.contentChange(content);
+		props.callback.fontSizeChange(fontSize);
+	};
+
+	const resetSettings = () => {
+		props.callback.fontChange(defaultArticleState.fontFamilyOption);
+		props.callback.fontColorChange(defaultArticleState.fontColor);
+		props.callback.bgColorChange(defaultArticleState.backgroundColor);
+		props.callback.contentChange(defaultArticleState.contentWidth);
+		props.callback.fontSizeChange(defaultArticleState.fontSizeOption);
+		isFont(defaultArticleState.fontFamilyOption)
+		isFontColor(defaultArticleState.fontColor)
+		isBgColor(defaultArticleState.backgroundColor)
+		isContent(defaultArticleState.contentWidth)
+		isFontSize(defaultArticleState.fontSizeOption)
 	};
 
 	return (
@@ -63,10 +88,11 @@ export const ArticleParamsForm = (props: Props) => {
 						options={fontFamilyOptions}
 						title='шрифт'
 					/>
-					<RadioGroup
+					<RadioGroup 
+						onChange={fontSizeChange}
 						name='размер шрифта'
 						options={fontSizeOptions}
-						selected={fontSizeOptions[0]}
+						selected={fontSize}
 						title='размер шрифта'
 					/>
 					<Select
@@ -82,13 +108,14 @@ export const ArticleParamsForm = (props: Props) => {
 						options={backgroundColors}
 						title='Цвет фона'
 					/>
-					<Select
-						selected={contentWidthArr[0]}
+					<Select 
+						onChange={contentChange}
+						selected={content}
 						options={contentWidthArr}
 						title='Ширина контента'
 					/>
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' type='reset' />
+						<Button title='Сбросить' type='reset' onClick={resetSettings}/>
 						<Button title='Применить' type='submit' onClick={setSettings} />
 					</div>
 				</form>
