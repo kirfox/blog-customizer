@@ -3,7 +3,7 @@ import { Button } from 'components/button';
 import { Text } from 'components/text';
 
 import styles from './ArticleParamsForm.module.scss';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import clsx from 'clsx';
 import { Select } from '../select';
 import {
@@ -17,6 +17,7 @@ import {
 } from 'src/constants/articleProps';
 import { RadioGroup } from '../radio-group';
 import { Separator } from '../separator';
+import useOverlayClose from 'src/hooks/useOverlay';
 
 type Props = {
 	callback: {
@@ -29,8 +30,12 @@ type Props = {
 };
 
 export const ArticleParamsForm = (props: Props) => {
+
 	const [open, isOpen] = useState(false);
 	const handleOpen = () => isOpen(!open);
+
+	const wrapperRef = useRef(null);
+	useOverlayClose(wrapperRef, isOpen);
 
 	const menuStyle = clsx({
 		[styles.container]: true,
@@ -38,19 +43,18 @@ export const ArticleParamsForm = (props: Props) => {
 	});
 
 	const [font, isFont] = useState(defaultArticleState.fontFamilyOption);
-	const fontChange = (e: OptionType) => isFont(e);
-	
 	const [fontColor, isFontColor] = useState(defaultArticleState.fontColor);
-	const fontColorChange = (e: OptionType) => isFontColor(e);
-
 	const [bgColor, isBgColor] = useState(defaultArticleState.backgroundColor);
-	const bgColorChange = (e: OptionType) => isBgColor(e);
-
 	const [content, isContent] = useState(defaultArticleState.contentWidth);
-	const contentChange = (e: OptionType) => isContent(e);
-
 	const [fontSize, isFontSize] = useState(defaultArticleState.fontSizeOption);
-	const fontSizeChange = (e: OptionType) => isFontSize(e);
+	
+	const chooseSettings = (e: OptionType) => {
+		if(fontFamilyOptions.includes(e)) isFont(e);
+		if(fontSizeOptions.includes(e)) isFontSize(e);
+		if(fontColors.includes(e)) isFontColor(e);
+		if(backgroundColors.includes(e)) isBgColor(e);
+		if(contentWidthArr.includes(e)) isContent(e);
+	}
 
 	const setSettings = () => {
 		event?.preventDefault();
@@ -77,39 +81,39 @@ export const ArticleParamsForm = (props: Props) => {
 	return (
 		<>
 			<ArrowButton isOpen={handleOpen} menuOpen={open} />
-			<aside className={menuStyle}>
+			<aside className={menuStyle} ref={wrapperRef}>
 				<form className={styles.form}>
 					<Text as='h2' size={31} weight={800} uppercase>
 						Задайте параметры
 					</Text>
 					<Select
-						onChange={fontChange}
+						onChange={chooseSettings}
 						selected={font}
 						options={fontFamilyOptions}
 						title='шрифт'
 					/>
 					<RadioGroup 
-						onChange={fontSizeChange}
+						onChange={chooseSettings}
 						name='размер шрифта'
 						options={fontSizeOptions}
 						selected={fontSize}
 						title='размер шрифта'
 					/>
 					<Select
-						onChange={fontColorChange}
+						onChange={chooseSettings}
 						selected={fontColor}
 						options={fontColors}
 						title='Цвет шрифта'
 					/>
 					<Separator />
 					<Select
-						onChange={bgColorChange}
+						onChange={chooseSettings}
 						selected={bgColor}
 						options={backgroundColors}
 						title='Цвет фона'
 					/>
 					<Select 
-						onChange={contentChange}
+						onChange={chooseSettings}
 						selected={content}
 						options={contentWidthArr}
 						title='Ширина контента'
